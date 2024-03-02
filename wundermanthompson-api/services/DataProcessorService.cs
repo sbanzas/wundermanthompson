@@ -14,7 +14,7 @@ public interface IDataProcessorService
   Task<DataJobDTO> Update(Guid datajoobId, DataJobDTO dataJob);
   Task Delete(Guid dataJobID);
   Task<bool> StartBackgroundProcess(Guid dataJobId);
-  Task<DataJobStatus> GetBackgroundProcessStatus(Guid dataJobId);
+  Task<DataJobStatus?> GetBackgroundProcessStatus(Guid dataJobId);
   Task<List<string>> GetBackgroundProcessResults(Guid dataJobId);
 }
 
@@ -69,15 +69,21 @@ public class DataProcessorService(IDataJobRepository dataJobRepository, ILinksRe
         return results.Select(r => r.Value).ToList();
     }
 
-    public async Task<DataJobStatus> GetBackgroundProcessStatus(Guid dataJobId)
+    public async Task<DataJobStatus?> GetBackgroundProcessStatus(Guid dataJobId)
     {
         var dataJob = await _dataJobRepository.GetById(dataJobId);
+        if (dataJob == null)
+          return null;
         return dataJob.Status;
     }
 
     public async Task<DataJobDTO> GetDataJob(Guid id)
     {
         var dataJob = await _dataJobRepository.GetById(id);
+
+        if (dataJob == null) 
+          return null;
+
         return MapDataJobToDataJobDTO(dataJob, [], []);
     }
 

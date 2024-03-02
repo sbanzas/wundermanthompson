@@ -13,9 +13,12 @@ public class LinksRepository(InMemoryDbContext dbContext) : ILinksRepository
 {
     public InMemoryDbContext _context = dbContext;
 
-    public Task<IEnumerable<Link>> Insert(IEnumerable<Link> linksToInsert)
+    public async Task<IEnumerable<Link>> Insert(IEnumerable<Link> linksToInsert)
     {
-        throw new NotImplementedException();
+        _context.Links.AddRange(linksToInsert);
+        await _context.SaveChangesAsync();
+
+        return linksToInsert;
     }
 
     public async Task DeleteByDataJobId(Guid dataJobId)
